@@ -6,6 +6,7 @@ import 'package:e_commerce_poc/database/app_database.dart';
 import 'package:e_commerce_poc/database/dao/category_dao.dart';
 import 'package:e_commerce_poc/database/dao/product_dao.dart';
 import 'package:e_commerce_poc/database/dao/ranking_dao.dart';
+import 'package:e_commerce_poc/database/model/categories_with_sub_category.dart';
 import 'package:e_commerce_poc/repository/api_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
         await rankingDao.insertAllRankings(dataBean);
       }
       Map<String, dynamic> homeContent = Map();
-      List<Category> parentCatList = await categoryDao.getCategoryWithSubCategory();
+      List<CategoriesWithSubCategory> parentCatList = await categoryDao.getCategoryWithSubCategory();
       homeContent["Categories"] = parentCatList;
       yield HomePageLoaded(homeContent);
     } catch (ex) {

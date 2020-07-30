@@ -2,6 +2,8 @@ import 'package:e_commerce_poc/bean/category_bean.dart';
 import 'package:e_commerce_poc/bean/data_bean.dart';
 import 'package:e_commerce_poc/database/app_database.dart';
 import 'package:e_commerce_poc/database/model/categories.dart';
+import 'package:e_commerce_poc/database/model/categories_with_sub_category.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 part 'category_dao.g.dart';
@@ -14,12 +16,19 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
 
   Future<List<Category>> getParentCategory() => (select(categories)..where((tbl) => isNull(tbl.parentId))).get();
 
-  Future<List<Category>> getCategoryWithSubCategory() {
-    final subCategory = alias(categories, 'subCategory');
-    return (select(categories)
-          ..join([innerJoin(subCategory, subCategory.parentId.equalsExp(categories.id))])
-          ..where((tbl) => isNull(tbl.parentId)))
-        .get();
+  Future<List<CategoriesWithSubCategory>> getCategoryWithSubCategory() async {
+    final subCategoryTable = alias(categories, 'subCategory');
+    final parentCatList = await (select(categories)..where((tbl) => isNull(tbl.parentId))).get();
+
+    final List<CategoriesWithSubCategory> categoryWithSubCatList = List();
+    for (Category category in parentCatList) {
+      final subCategory = await (select(categories))
+          .join([innerJoin(subCategoryTable, subCategoryTable.parentId.equalsExp(categories.id))])
+          .map((resultRow) => resultRow.readTable(subCategoryTable))
+          .get();
+      categoryWithSubCatList.add(CategoriesWithSubCategory(category, subCategory));
+    }
+    return categoryWithSubCatList;
   }
 
   Future<void> insertAllCategory(DataBean appData) {

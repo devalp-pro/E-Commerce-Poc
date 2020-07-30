@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:e_commerce_poc/blocs/home/home_page_bloc.dart';
 import 'package:e_commerce_poc/database/app_database.dart';
-import 'package:e_commerce_poc/database/model/categories.dart';
+import 'package:e_commerce_poc/database/model/categories_with_sub_category.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -109,7 +109,7 @@ class _MyListItem extends StatelessWidget {
                                     onTap: () => {},
                                     child: Center(
                                       child: Text(
-                                        (listItem[index] as Category).name,
+                                        (listItem[index] as CategoriesWithSubCategory).categories.name,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,

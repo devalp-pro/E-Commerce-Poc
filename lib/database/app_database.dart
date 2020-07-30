@@ -14,5 +14,13 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(FlutterQueryExecutor.inDatabaseFolder(path: 'app.sqlite', logStatements: true));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  MigrationStrategy get migration => MigrationStrategy(onCreate: (Migrator migrator) {
+        return migrator.createAll();
+      }, onUpgrade: (Migrator migrator, int from, int to) async {
+        if (from == 1) {
+          await migrator.createTable(rankings);
+        }
+      });
 }

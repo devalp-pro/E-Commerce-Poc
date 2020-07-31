@@ -8,4 +8,5 @@ part of 'ranking_dao.dart';
 
 mixin _$RankingDaoMixin on DatabaseAccessor<AppDatabase> {
   $RankingsTable get rankings => attachedDatabase.rankings;
+  $ProductsTable get products => attachedDatabase.products;
 }

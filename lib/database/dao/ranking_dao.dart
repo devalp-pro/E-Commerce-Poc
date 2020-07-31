@@ -1,14 +1,17 @@
 import 'package:e_commerce_poc/bean/data_bean.dart';
+import 'package:e_commerce_poc/bean/product_bean.dart';
 import 'package:e_commerce_poc/bean/ranking_bean.dart';
 import 'package:e_commerce_poc/bean/ranking_product_bean.dart';
 import 'package:e_commerce_poc/database/app_database.dart';
+import 'package:e_commerce_poc/database/model/product_ranking.dart';
 import 'package:e_commerce_poc/database/model/products.dart';
 import 'package:e_commerce_poc/database/model/rankings.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:moor/moor.dart';
 
 part 'ranking_dao.g.dart';
 
-@UseDao(tables: [Rankings])
+@UseDao(tables: [Rankings, Products])
 class RankingDao extends DatabaseAccessor<AppDatabase> with _$RankingDaoMixin {
   final AppDatabase appDatabase;
 
@@ -33,5 +36,34 @@ class RankingDao extends DatabaseAccessor<AppDatabase> with _$RankingDaoMixin {
         }
       }
     });
+  }
+
+  Future<Map<String, List<ProductRanking>>> getRankingProducts() async {
+    Map<String, List<ProductRanking>> mapRankings = Map();
+    final viewRankingList = await (select(rankings).join([innerJoin(products, products.id.equalsExp(rankings.productId))])
+          ..groupBy([rankings.productId])
+          ..orderBy([OrderingTerm(expression: rankings.productId)])
+          ..where(rankings.viewCount.isBiggerThanValue(0)))
+        .map((rawResult) => ProductRanking(rawResult.readTable(products), rawResult.readTable(rankings).viewCount))
+        .get();
+    mapRankings['Most Viewed Products'] = viewRankingList;
+
+    final orderRankingList = await (select(rankings).join([innerJoin(products, products.id.equalsExp(rankings.productId))])
+          ..groupBy([rankings.productId])
+          ..orderBy([OrderingTerm(expression: rankings.productId)])
+          ..where(rankings.orderCount.isBiggerThanValue(0)))
+        .map((rawResult) => ProductRanking(rawResult.readTable(products), rawResult.readTable(rankings).orderCount))
+        .get();
+    mapRankings['Most Ordered Products'] = orderRankingList;
+
+    final sharedRankingList = await (select(rankings).join([innerJoin(products, products.id.equalsExp(rankings.productId))])
+          ..groupBy([rankings.productId])
+          ..orderBy([OrderingTerm(expression: rankings.productId)])
+          ..where(rankings.sharedCount.isBiggerThanValue(0)))
+        .map((rawResult) => ProductRanking(rawResult.readTable(products), rawResult.readTable(rankings).sharedCount))
+        .get();
+    mapRankings['Most Shared Products'] = sharedRankingList;
+
+    return mapRankings;
   }
 }

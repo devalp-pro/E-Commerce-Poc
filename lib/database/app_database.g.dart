@@ -506,7 +506,7 @@ class Ranking extends DataClass implements Insertable<Ranking> {
   final int sharedCount;
   Ranking(
       {@required this.id,
-      this.productId,
+      @required this.productId,
       this.viewCount,
       this.orderCount,
       this.sharedCount});
@@ -646,11 +646,11 @@ class RankingsCompanion extends UpdateCompanion<Ranking> {
   });
   RankingsCompanion.insert({
     this.id = const Value.absent(),
-    this.productId = const Value.absent(),
+    @required int productId,
     this.viewCount = const Value.absent(),
     this.orderCount = const Value.absent(),
     this.sharedCount = const Value.absent(),
-  });
+  }) : productId = Value(productId);
   static Insertable<Ranking> custom({
     Expression<int> id,
     Expression<int> productId,
@@ -734,8 +734,8 @@ class $RankingsTable extends Rankings with TableInfo<$RankingsTable, Ranking> {
   @override
   GeneratedIntColumn get productId => _productId ??= _constructProductId();
   GeneratedIntColumn _constructProductId() {
-    return GeneratedIntColumn('product_id', $tableName, true,
-        $customConstraints: 'NULLABLE REFERENCES Product(id)');
+    return GeneratedIntColumn('product_id', $tableName, false,
+        $customConstraints: 'REFERENCES Product(id)');
   }
 
   final VerificationMeta _viewCountMeta = const VerificationMeta('viewCount');
@@ -796,6 +796,8 @@ class $RankingsTable extends Rankings with TableInfo<$RankingsTable, Ranking> {
     if (data.containsKey('product_id')) {
       context.handle(_productIdMeta,
           productId.isAcceptableOrUnknown(data['product_id'], _productIdMeta));
+    } else if (isInserting) {
+      context.missing(_productIdMeta);
     }
     if (data.containsKey('view_count')) {
       context.handle(_viewCountMeta,

@@ -22,16 +22,23 @@ class RankingDao extends DatabaseAccessor<AppDatabase> with _$RankingDaoMixin {
       for (RankingBean rankingBean in appData.rankings) {
         if (rankingBean.products.isNotEmpty) {
           for (RankingProductBean productsBean in rankingBean.products) {
-            RankingsCompanion rankingsCompanion = RankingsCompanion(
-                viewCount: Value(productsBean.viewCount),
-                orderCount: Value(productsBean.orderCount),
-                sharedCount: Value(productsBean.shares),
-                productId: Value(productsBean.id));
-            try {
-              await into(rankings).insert(rankingsCompanion);
-            } catch (ex) {
-              update(rankings).replace(rankingsCompanion);
+            Ranking ranking = await (select(rankings)..where((tbl) => tbl.productId.equals(productsBean.id))).getSingle();
+            RankingsCompanion rankingsCompanion;
+            if (ranking != null) {
+              rankingsCompanion = ranking.toCompanion(false);
+              if (productsBean.orderCount != null) {
+                rankingsCompanion = rankingsCompanion.copyWith(orderCount: Value(productsBean.orderCount));
+              } else if (productsBean.shares != null) {
+                rankingsCompanion = rankingsCompanion.copyWith(sharedCount: Value(productsBean.shares));
+              }
+            } else {
+              rankingsCompanion = RankingsCompanion(
+                  viewCount: Value(productsBean.viewCount),
+                  orderCount: Value(productsBean.orderCount),
+                  sharedCount: Value(productsBean.shares),
+                  productId: Value(productsBean.id));
             }
+            await into(rankings).insertOnConflictUpdate(rankingsCompanion);
           }
         }
       }

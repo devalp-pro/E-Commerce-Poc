@@ -44,8 +44,8 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       homeContent["Categories"] = parentCatList;
       homeContent.addAll(await appDatabase.rankingDao.getRankingProducts());
       yield HomePageLoaded(homeContent);
-    } catch (ex) {
-      debugPrint(ex);
+    } on Exception catch (ex) {
+      print(ex);
       yield HomePageError();
     }
   }

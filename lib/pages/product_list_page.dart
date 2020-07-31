@@ -29,16 +29,14 @@ class _ProductListPageState extends State<ProductListPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   String sortByValue = "Name";
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-      ProductListPageBloc(
+      create: (context) => ProductListPageBloc(
         apiRepository: ApiRepository(apiClient: ApiClient(dioClient: Dio())),
         appDatabase: appDatabase,
-      )
-        ..add(ProductListPageStarted(category)),
+      )..add(ProductListPageStarted(category)),
       child: BlocBuilder<ProductListPageBloc, ProductListPageState>(builder: (context, state) {
         if (state is ProductListPageLoading) {
           return DashboardPage(
@@ -60,19 +58,23 @@ class _ProductListPageState extends State<ProductListPage> {
             [
               MyAppBar(_scaffoldKey),
               StreamBuilder(
-                stream: appDatabase.productDao.getProductsByCategoryId(category.id, sortByValue),
-                builder: (context, snapshot) =>
-                    SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-                      delegate: SliverChildBuilderDelegate(
-                            (context, index) =>
-                            _MyListItem(
-                              snapshot.data[index],
-                              index,
-                            ),
-                        childCount: snapshot.hasData ? snapshot.data.length : 0,
-                      ),
+                stream: sortByValue == "Most Viewed"
+                    ? appDatabase.productDao.getProductsByCategoryIdAndMostViewed(category.id)
+                    : sortByValue == "Most Ordered"
+                        ? appDatabase.productDao.getProductsByCategoryIdAndMostOrdered(category.id)
+                        : sortByValue == "Most Shared"
+                            ? appDatabase.productDao.getProductsByCategoryIdAndMostShared(category.id)
+                            : appDatabase.productDao.getProductsByCategoryIdAndName(category.id),
+                builder: (context, AsyncSnapshot<List<Product>> snapshot) => SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _MyListItem(
+                      snapshot.data[index],
+                      index,
                     ),
+                    childCount: snapshot.hasData ? snapshot.data.length : 0,
+                  ),
+                ),
               ),
             ],
             state.productListContent['Menu'],

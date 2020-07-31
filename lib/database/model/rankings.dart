@@ -4,7 +4,7 @@ import 'package:moor/moor.dart';
 class Rankings extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get productId => integer().nullable().customConstraint('NULLABLE REFERENCES Product(id)')();
+  IntColumn get productId => integer().customConstraint('REFERENCES Product(id)')();
 
   IntColumn get viewCount => integer().nullable()();
 

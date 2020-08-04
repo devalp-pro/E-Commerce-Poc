@@ -81,7 +81,7 @@ class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
     }).watch();
   }
 
-  Future<ProductWithDetails> getProductWithDetail(int prodId, {Variant variant}) async {
+  Future<ProductWithDetails> getProductWithDetail(int prodId) async {
     Product product = await (select(products)..where((tbl) => tbl.id.equals(prodId))).getSingle();
 
     List<Variant> colorVariantList = await (select(products).join([innerJoin(variants, variants.productId.equalsExp(products.id))])
@@ -90,22 +90,16 @@ class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
         .map((rawData) => rawData.readTable(variants))
         .get();
 
-    List<Variant> sizeVariantList;
-    if (variant == null)
-      sizeVariantList = await (select(products).join([innerJoin(variants, variants.productId.equalsExp(products.id))])
-            ..where(products.id.equals(prodId))
-            ..groupBy([variants.size]))
-          .map((rawData) => rawData.readTable(variants))
-          .get();
-    else
-      sizeVariantList = await (select(products).join([innerJoin(variants, variants.productId.equalsExp(products.id))])
-            ..where(products.id.equals(prodId))
-            ..where(variants.color.equals(variant.color))
-            ..groupBy([variants.size]))
-          .map((rawData) => rawData.readTable(variants))
-          .get();
+    return ProductWithDetails(product: product, colorVariants: colorVariantList);
+  }
 
-    return ProductWithDetails(product: product, colorVariants: colorVariantList, sizeVariants: sizeVariantList);
+  Stream<List<Variant>> getProductSizeVariantByColor(int prodId, String color) {
+    return (select(products).join([innerJoin(variants, variants.productId.equalsExp(products.id))])
+          ..where(products.id.equals(prodId))
+          ..where(variants.color.equals(color))
+          ..groupBy([variants.size]))
+        .map((rawData) => rawData.readTable(variants))
+        .watch();
   }
 
 //  Stream<List<Product>> getProductsByCategoryIdAndMostViewed(int catId) {

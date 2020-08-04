@@ -29,9 +29,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  final GlobalKey priceUpdateKey = GlobalKey();
+
   ProductWithDetails productWithDetails;
 
   Variant selectedSizeVariant;
+
+  Variant selectedColorVariant;
 
   HtmlUnescape htmlUnescape = HtmlUnescape();
 
@@ -59,12 +63,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           );
         }
         if (state is ProductDetailPageLoaded) {
-          selectedSizeVariant = state.productWithDetails.sizeVariants[0];
+          if (selectedColorVariant == null) selectedColorVariant = state.productWithDetails.colorVariants[0];
 
           return DashboardPage(
             [
               MyAppBar(_scaffoldKey),
               SliverList(
+                key: priceUpdateKey,
                 delegate: SliverChildListDelegate([
                   Container(
                     color: Colors.black12,
@@ -73,6 +78,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       children: <Widget>[
                         Container(
                           margin: EdgeInsets.only(bottom: 20),
+//                          key: priceUpdateKey,
                           color: Colors.white,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +94,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 padding: const EdgeInsets.all(10),
                                 child: RichText(
                                   text: TextSpan(
-                                    text: state.productWithDetails.product.name,
+                                    text: "${state.productWithDetails.product.name} - (${selectedColorVariant != null ? selectedColorVariant.color : ""})",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -100,7 +106,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               Padding(
                                 padding: const EdgeInsets.all(10),
                                 child: Text(
-                                  htmlUnescape.convert("&#x20B9; ${selectedSizeVariant.price.toString()}"),
+                                  htmlUnescape.convert("&#x20B9; " + (selectedSizeVariant != null ? selectedSizeVariant.price.toString() : "")),
                                   style: TextStyle(
                                     color: Colors.blueGrey,
                                     fontSize: 18,
@@ -141,8 +147,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                         highlightShape: BoxShape.rectangle,
                                         onTap: () {
                                           setState(() {
-                                            BlocProvider.of<ProductDetailPageBloc>(context)
-                                                .add(ProductDetailPageUpdateSize(state.productWithDetails.colorVariants[index], product));
+                                            this.selectedColorVariant = state.productWithDetails.colorVariants[index];
                                           });
                                         },
                                         child: Container(
@@ -203,43 +208,55 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               ),
                               Container(
                                 height: 80,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    return Material(
-                                      color: Colors.transparent,
-                                      child: InkResponse(
-                                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                                        highlightShape: BoxShape.circle,
-                                        onTap: () {
+                                child: StreamBuilder<List<Variant>>(
+                                    stream: appDatabase.productDao.getProductSizeVariantByColor(product.id, selectedColorVariant.color),
+                                    builder: (context, AsyncSnapshot<List<Variant>> snapshot) {
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        if (snapshot.hasData && selectedSizeVariant == null) {
                                           setState(() {
-                                            selectedSizeVariant = state.productWithDetails.sizeVariants[index];
+                                            selectedSizeVariant = snapshot.data[0];
                                           });
-                                        },
-                                        child: Container(
-                                          width: 60,
-                                          height: 60,
-                                          margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
+                                        }
+                                      });
+
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (context, index) {
+                                          return Material(
                                             color: Colors.transparent,
-                                            border: Border.all(
-                                              color: Colors.blue,
+                                            child: InkResponse(
+                                              borderRadius: BorderRadius.all(Radius.circular(50)),
+                                              highlightShape: BoxShape.circle,
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedSizeVariant = snapshot.data[index];
+                                                });
+                                              },
+                                              child: Container(
+                                                width: 60,
+                                                height: 60,
+                                                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.transparent,
+                                                  border: Border.all(
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    snapshot.data[index].size.toString(),
+                                                    style: TextStyle(color: Colors.blue),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              state.productWithDetails.sizeVariants[index].size.toString(),
-                                              style: TextStyle(color: Colors.blue),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  itemCount: state.productWithDetails.sizeVariants.length,
-                                ),
+                                          );
+                                        },
+                                        itemCount: snapshot.hasData ? snapshot.data.length : 0,
+                                      );
+                                    }),
                               )
                             ],
                           ),

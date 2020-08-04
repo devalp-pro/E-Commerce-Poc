@@ -53,7 +53,7 @@ class ProductDetailPageBloc extends Bloc<ProductDetailPageEvent, ProductDetailPa
       Map<String, dynamic> catListContent = Map();
       List<CategoriesWithSubCategory> parentCatList = await appDatabase.categoryDao.getCategoryWithSubCategory();
       catListContent["Menu"] = parentCatList;
-      ProductWithDetails productWithDetails = await appDatabase.productDao.getProductWithDetail(product.id, variant: variant);
+      ProductWithDetails productWithDetails = await appDatabase.productDao.getProductWithDetail(product.id);
       yield ProductDetailPageLoaded(catListContent, productWithDetails);
     } catch (ex) {
       debugPrint(ex);

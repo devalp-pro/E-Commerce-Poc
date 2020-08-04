@@ -11,9 +11,11 @@ class TaxDao extends DatabaseAccessor<AppDatabase> with _$TaxDaoMixin {
 
   TaxDao(this.appDatabase) : super(appDatabase);
 
-  Future<Tax> getProductTax(int productId) async {
-    return await (select(productTax).join([innerJoin(products, products.id.equalsExp(productTax.productId))])..where(products.id.equals(productId)))
-        .map((raw) => raw.readTable(productTax))
+  Future<Tax> getProductTax(int productId) {
+    return (select(productTax).join([innerJoin(products, products.id.equalsExp(productTax.productId))])
+          ..where(products.id.equals(productId))
+          ..limit(1))
+        .map((rawData) => rawData.readTable(productTax))
         .getSingle();
   }
 }

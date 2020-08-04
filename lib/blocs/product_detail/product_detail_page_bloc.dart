@@ -41,8 +41,8 @@ class ProductDetailPageBloc extends Bloc<ProductDetailPageEvent, ProductDetailPa
       catListContent["Menu"] = parentCatList;
       ProductWithDetails productWithDetails = await appDatabase.productDao.getProductWithDetail(product.id);
       yield ProductDetailPageLoaded(catListContent, productWithDetails);
-    } catch (ex) {
-      debugPrint(ex);
+    } catch (ex, stack) {
+      print(stack);
       yield ProductDetailPageError();
     }
   }

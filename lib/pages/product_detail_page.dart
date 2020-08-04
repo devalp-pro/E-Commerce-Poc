@@ -37,6 +37,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Variant selectedColorVariant;
 
+  Variant prevSelectedColorVariant;
+
   HtmlUnescape htmlUnescape = HtmlUnescape();
 
   @override
@@ -63,7 +65,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           );
         }
         if (state is ProductDetailPageLoaded) {
-          if (selectedColorVariant == null) selectedColorVariant = state.productWithDetails.colorVariants[0];
+          if (selectedColorVariant == null) {
+            selectedColorVariant = state.productWithDetails.colorVariants[0];
+          }
 
           return DashboardPage(
             [
@@ -220,12 +224,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                               Container(
                                 height: 80,
                                 child: StreamBuilder<List<Variant>>(
+                                  initialData: List(),
                                     stream: appDatabase.productDao.getProductSizeVariantByColor(product.id, selectedColorVariant.color),
                                     builder: (context, AsyncSnapshot<List<Variant>> snapshot) {
                                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        if (snapshot.hasData && selectedSizeVariant == null) {
+                                        if (snapshot.hasData && selectedSizeVariant == null && snapshot.data.isNotEmpty) {
                                           setState(() {
-                                            selectedSizeVariant = snapshot.data[0];
+                                            selectedSizeVariant = selectedColorVariant;
+                                          });
+                                        } else if (snapshot.hasData && selectedColorVariant != prevSelectedColorVariant && snapshot.data.isNotEmpty) {
+                                          prevSelectedColorVariant = selectedColorVariant;
+                                          setState(() {
+                                            selectedSizeVariant = selectedColorVariant;
                                           });
                                         }
                                       });

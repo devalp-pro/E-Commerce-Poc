@@ -7,6 +7,7 @@ import 'package:e_commerce_poc/database/model/categories_with_sub_category.dart'
 import 'package:e_commerce_poc/database/model/product_ranking.dart';
 import 'package:e_commerce_poc/pages/category_list_page.dart';
 import 'package:e_commerce_poc/pages/dashboard_page.dart';
+import 'package:e_commerce_poc/pages/product_detail_page.dart';
 import 'package:e_commerce_poc/repository/api_client.dart';
 import 'package:e_commerce_poc/repository/api_repository.dart';
 import 'package:flutter/cupertino.dart';
@@ -158,12 +159,17 @@ class _MyListItem extends StatelessWidget {
                   shadowColor: Colors.blueAccent,
                   child: InkWell(
                     splashColor: Colors.blue,
-                    onTap: () => {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CategoryListPage(
-                                category: listItem[index].categories,
-                                appDatabase: appDatabase,
-                              )))
+                    onTap: () {
+                      if (listItem[index] is CategoriesWithSubCategory) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CategoryListPage(
+                                  category: (listItem[index] as CategoriesWithSubCategory).categories,
+                                  appDatabase: appDatabase,
+                                )));
+                      } else if (listItem[index] is ProductRanking) {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => ProductDetailPage((listItem[index] as ProductRanking).products, appDatabase)));
+                      }
                     },
                     child: SizedBox(
                       width: 120,

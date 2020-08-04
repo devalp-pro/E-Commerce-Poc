@@ -1,12 +1,10 @@
 import 'package:e_commerce_poc/bean/data_bean.dart';
-import 'package:e_commerce_poc/bean/product_bean.dart';
 import 'package:e_commerce_poc/bean/ranking_bean.dart';
 import 'package:e_commerce_poc/bean/ranking_product_bean.dart';
 import 'package:e_commerce_poc/database/app_database.dart';
 import 'package:e_commerce_poc/database/model/product_ranking.dart';
 import 'package:e_commerce_poc/database/model/products.dart';
 import 'package:e_commerce_poc/database/model/rankings.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:moor/moor.dart';
 
 part 'ranking_dao.g.dart';

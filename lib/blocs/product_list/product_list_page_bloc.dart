@@ -35,7 +35,7 @@ class ProductListPageBloc extends Bloc<ProductListPageEvent, ProductListPageStat
       Map<String, dynamic> catListContent = Map();
       List<CategoriesWithSubCategory> parentCatList = await appDatabase.categoryDao.getCategoryWithSubCategory();
       catListContent["Menu"] = parentCatList;
-//      catListContent["Products"] = await appDatabase.productDao.getProductsByCategoryId(category.id);
+      
       yield ProductListPageLoaded(catListContent);
     } catch (ex) {
       debugPrint(ex);

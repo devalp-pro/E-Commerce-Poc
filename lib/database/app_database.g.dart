@@ -832,6 +832,319 @@ class $RankingsTable extends Rankings with TableInfo<$RankingsTable, Ranking> {
   }
 }
 
+class Variant extends DataClass implements Insertable<Variant> {
+  final int id;
+  final String color;
+  final int size;
+  final int price;
+  final int productId;
+  Variant(
+      {@required this.id,
+      @required this.color,
+      this.size,
+      this.price,
+      this.productId});
+  factory Variant.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return Variant(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      color:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}color']),
+      size: intType.mapFromDatabaseResponse(data['${effectivePrefix}size']),
+      price: intType.mapFromDatabaseResponse(data['${effectivePrefix}price']),
+      productId:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}product_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || color != null) {
+      map['color'] = Variable<String>(color);
+    }
+    if (!nullToAbsent || size != null) {
+      map['size'] = Variable<int>(size);
+    }
+    if (!nullToAbsent || price != null) {
+      map['price'] = Variable<int>(price);
+    }
+    if (!nullToAbsent || productId != null) {
+      map['product_id'] = Variable<int>(productId);
+    }
+    return map;
+  }
+
+  VariantsCompanion toCompanion(bool nullToAbsent) {
+    return VariantsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      color:
+          color == null && nullToAbsent ? const Value.absent() : Value(color),
+      size: size == null && nullToAbsent ? const Value.absent() : Value(size),
+      price:
+          price == null && nullToAbsent ? const Value.absent() : Value(price),
+      productId: productId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productId),
+    );
+  }
+
+  factory Variant.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Variant(
+      id: serializer.fromJson<int>(json['id']),
+      color: serializer.fromJson<String>(json['color']),
+      size: serializer.fromJson<int>(json['size']),
+      price: serializer.fromJson<int>(json['price']),
+      productId: serializer.fromJson<int>(json['productId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'color': serializer.toJson<String>(color),
+      'size': serializer.toJson<int>(size),
+      'price': serializer.toJson<int>(price),
+      'productId': serializer.toJson<int>(productId),
+    };
+  }
+
+  Variant copyWith(
+          {int id, String color, int size, int price, int productId}) =>
+      Variant(
+        id: id ?? this.id,
+        color: color ?? this.color,
+        size: size ?? this.size,
+        price: price ?? this.price,
+        productId: productId ?? this.productId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Variant(')
+          ..write('id: $id, ')
+          ..write('color: $color, ')
+          ..write('size: $size, ')
+          ..write('price: $price, ')
+          ..write('productId: $productId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(color.hashCode,
+          $mrjc(size.hashCode, $mrjc(price.hashCode, productId.hashCode)))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Variant &&
+          other.id == this.id &&
+          other.color == this.color &&
+          other.size == this.size &&
+          other.price == this.price &&
+          other.productId == this.productId);
+}
+
+class VariantsCompanion extends UpdateCompanion<Variant> {
+  final Value<int> id;
+  final Value<String> color;
+  final Value<int> size;
+  final Value<int> price;
+  final Value<int> productId;
+  const VariantsCompanion({
+    this.id = const Value.absent(),
+    this.color = const Value.absent(),
+    this.size = const Value.absent(),
+    this.price = const Value.absent(),
+    this.productId = const Value.absent(),
+  });
+  VariantsCompanion.insert({
+    this.id = const Value.absent(),
+    @required String color,
+    this.size = const Value.absent(),
+    this.price = const Value.absent(),
+    this.productId = const Value.absent(),
+  }) : color = Value(color);
+  static Insertable<Variant> custom({
+    Expression<int> id,
+    Expression<String> color,
+    Expression<int> size,
+    Expression<int> price,
+    Expression<int> productId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (color != null) 'color': color,
+      if (size != null) 'size': size,
+      if (price != null) 'price': price,
+      if (productId != null) 'product_id': productId,
+    });
+  }
+
+  VariantsCompanion copyWith(
+      {Value<int> id,
+      Value<String> color,
+      Value<int> size,
+      Value<int> price,
+      Value<int> productId}) {
+    return VariantsCompanion(
+      id: id ?? this.id,
+      color: color ?? this.color,
+      size: size ?? this.size,
+      price: price ?? this.price,
+      productId: productId ?? this.productId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (color.present) {
+      map['color'] = Variable<String>(color.value);
+    }
+    if (size.present) {
+      map['size'] = Variable<int>(size.value);
+    }
+    if (price.present) {
+      map['price'] = Variable<int>(price.value);
+    }
+    if (productId.present) {
+      map['product_id'] = Variable<int>(productId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VariantsCompanion(')
+          ..write('id: $id, ')
+          ..write('color: $color, ')
+          ..write('size: $size, ')
+          ..write('price: $price, ')
+          ..write('productId: $productId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $VariantsTable extends Variants with TableInfo<$VariantsTable, Variant> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $VariantsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _colorMeta = const VerificationMeta('color');
+  GeneratedTextColumn _color;
+  @override
+  GeneratedTextColumn get color => _color ??= _constructColor();
+  GeneratedTextColumn _constructColor() {
+    return GeneratedTextColumn('color', $tableName, false,
+        minTextLength: 1, maxTextLength: 50);
+  }
+
+  final VerificationMeta _sizeMeta = const VerificationMeta('size');
+  GeneratedIntColumn _size;
+  @override
+  GeneratedIntColumn get size => _size ??= _constructSize();
+  GeneratedIntColumn _constructSize() {
+    return GeneratedIntColumn(
+      'size',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _priceMeta = const VerificationMeta('price');
+  GeneratedIntColumn _price;
+  @override
+  GeneratedIntColumn get price => _price ??= _constructPrice();
+  GeneratedIntColumn _constructPrice() {
+    return GeneratedIntColumn(
+      'price',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _productIdMeta = const VerificationMeta('productId');
+  GeneratedIntColumn _productId;
+  @override
+  GeneratedIntColumn get productId => _productId ??= _constructProductId();
+  GeneratedIntColumn _constructProductId() {
+    return GeneratedIntColumn('product_id', $tableName, true,
+        $customConstraints: 'NULLABLE REFERENCES Product(id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, color, size, price, productId];
+  @override
+  $VariantsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'variants';
+  @override
+  final String actualTableName = 'variants';
+  @override
+  VerificationContext validateIntegrity(Insertable<Variant> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('color')) {
+      context.handle(
+          _colorMeta, color.isAcceptableOrUnknown(data['color'], _colorMeta));
+    } else if (isInserting) {
+      context.missing(_colorMeta);
+    }
+    if (data.containsKey('size')) {
+      context.handle(
+          _sizeMeta, size.isAcceptableOrUnknown(data['size'], _sizeMeta));
+    }
+    if (data.containsKey('price')) {
+      context.handle(
+          _priceMeta, price.isAcceptableOrUnknown(data['price'], _priceMeta));
+    }
+    if (data.containsKey('product_id')) {
+      context.handle(_productIdMeta,
+          productId.isAcceptableOrUnknown(data['product_id'], _productIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Variant map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Variant.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $VariantsTable createAlias(String alias) {
+    return $VariantsTable(_db, alias);
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $CategoriesTable _categories;
@@ -840,6 +1153,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $ProductsTable get products => _products ??= $ProductsTable(this);
   $RankingsTable _rankings;
   $RankingsTable get rankings => _rankings ??= $RankingsTable(this);
+  $VariantsTable _variants;
+  $VariantsTable get variants => _variants ??= $VariantsTable(this);
   CategoryDao _categoryDao;
   CategoryDao get categoryDao =>
       _categoryDao ??= CategoryDao(this as AppDatabase);
@@ -847,9 +1162,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ProductDao get productDao => _productDao ??= ProductDao(this as AppDatabase);
   RankingDao _rankingDao;
   RankingDao get rankingDao => _rankingDao ??= RankingDao(this as AppDatabase);
+  VariantDao _variantDao;
+  VariantDao get variantDao => _variantDao ??= VariantDao(this as AppDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [categories, products, rankings];
+      [categories, products, rankings, variants];
 }

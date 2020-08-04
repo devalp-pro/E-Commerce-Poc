@@ -59,11 +59,7 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
         } else {
           categoriesCompanion = CategoriesCompanion(id: Value(category.id), name: Value(category.name));
         }
-        try {
-          await into(categories).insertOnConflictUpdate(categoriesCompanion);
-        } catch (ex) {
-          update(categories).replace(categoriesCompanion);
-        }
+        await into(categories).insertOnConflictUpdate(categoriesCompanion);
       }
     });
   }

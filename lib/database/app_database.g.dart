@@ -1145,6 +1145,280 @@ class $VariantsTable extends Variants with TableInfo<$VariantsTable, Variant> {
   }
 }
 
+class Tax extends DataClass implements Insertable<Tax> {
+  final int id;
+  final String name;
+  final double value;
+  final int productId;
+  Tax(
+      {@required this.id,
+      @required this.name,
+      this.value,
+      @required this.productId});
+  factory Tax.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    final doubleType = db.typeSystem.forDartType<double>();
+    return Tax(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      value:
+          doubleType.mapFromDatabaseResponse(data['${effectivePrefix}value']),
+      productId:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}product_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || value != null) {
+      map['value'] = Variable<double>(value);
+    }
+    if (!nullToAbsent || productId != null) {
+      map['product_id'] = Variable<int>(productId);
+    }
+    return map;
+  }
+
+  ProductTaxCompanion toCompanion(bool nullToAbsent) {
+    return ProductTaxCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      value:
+          value == null && nullToAbsent ? const Value.absent() : Value(value),
+      productId: productId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productId),
+    );
+  }
+
+  factory Tax.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Tax(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      value: serializer.fromJson<double>(json['value']),
+      productId: serializer.fromJson<int>(json['productId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'value': serializer.toJson<double>(value),
+      'productId': serializer.toJson<int>(productId),
+    };
+  }
+
+  Tax copyWith({int id, String name, double value, int productId}) => Tax(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        value: value ?? this.value,
+        productId: productId ?? this.productId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Tax(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('value: $value, ')
+          ..write('productId: $productId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(name.hashCode, $mrjc(value.hashCode, productId.hashCode))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Tax &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.value == this.value &&
+          other.productId == this.productId);
+}
+
+class ProductTaxCompanion extends UpdateCompanion<Tax> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<double> value;
+  final Value<int> productId;
+  const ProductTaxCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.value = const Value.absent(),
+    this.productId = const Value.absent(),
+  });
+  ProductTaxCompanion.insert({
+    this.id = const Value.absent(),
+    @required String name,
+    this.value = const Value.absent(),
+    @required int productId,
+  })  : name = Value(name),
+        productId = Value(productId);
+  static Insertable<Tax> custom({
+    Expression<int> id,
+    Expression<String> name,
+    Expression<double> value,
+    Expression<int> productId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (value != null) 'value': value,
+      if (productId != null) 'product_id': productId,
+    });
+  }
+
+  ProductTaxCompanion copyWith(
+      {Value<int> id,
+      Value<String> name,
+      Value<double> value,
+      Value<int> productId}) {
+    return ProductTaxCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      value: value ?? this.value,
+      productId: productId ?? this.productId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<double>(value.value);
+    }
+    if (productId.present) {
+      map['product_id'] = Variable<int>(productId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProductTaxCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('value: $value, ')
+          ..write('productId: $productId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ProductTaxTable extends ProductTax
+    with TableInfo<$ProductTaxTable, Tax> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $ProductTaxTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  GeneratedTextColumn _name;
+  @override
+  GeneratedTextColumn get name => _name ??= _constructName();
+  GeneratedTextColumn _constructName() {
+    return GeneratedTextColumn('name', $tableName, false,
+        minTextLength: 1, maxTextLength: 50);
+  }
+
+  final VerificationMeta _valueMeta = const VerificationMeta('value');
+  GeneratedRealColumn _value;
+  @override
+  GeneratedRealColumn get value => _value ??= _constructValue();
+  GeneratedRealColumn _constructValue() {
+    return GeneratedRealColumn(
+      'value',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _productIdMeta = const VerificationMeta('productId');
+  GeneratedIntColumn _productId;
+  @override
+  GeneratedIntColumn get productId => _productId ??= _constructProductId();
+  GeneratedIntColumn _constructProductId() {
+    return GeneratedIntColumn('product_id', $tableName, false,
+        $customConstraints: 'REFERENCES Product(id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, name, value, productId];
+  @override
+  $ProductTaxTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'product_tax';
+  @override
+  final String actualTableName = 'product_tax';
+  @override
+  VerificationContext validateIntegrity(Insertable<Tax> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+          _valueMeta, value.isAcceptableOrUnknown(data['value'], _valueMeta));
+    }
+    if (data.containsKey('product_id')) {
+      context.handle(_productIdMeta,
+          productId.isAcceptableOrUnknown(data['product_id'], _productIdMeta));
+    } else if (isInserting) {
+      context.missing(_productIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Tax map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Tax.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $ProductTaxTable createAlias(String alias) {
+    return $ProductTaxTable(_db, alias);
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $CategoriesTable _categories;
@@ -1155,6 +1429,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $RankingsTable get rankings => _rankings ??= $RankingsTable(this);
   $VariantsTable _variants;
   $VariantsTable get variants => _variants ??= $VariantsTable(this);
+  $ProductTaxTable _productTax;
+  $ProductTaxTable get productTax => _productTax ??= $ProductTaxTable(this);
   CategoryDao _categoryDao;
   CategoryDao get categoryDao =>
       _categoryDao ??= CategoryDao(this as AppDatabase);
@@ -1164,9 +1440,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   RankingDao get rankingDao => _rankingDao ??= RankingDao(this as AppDatabase);
   VariantDao _variantDao;
   VariantDao get variantDao => _variantDao ??= VariantDao(this as AppDatabase);
+  TaxDao _taxDao;
+  TaxDao get taxDao => _taxDao ??= TaxDao(this as AppDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [categories, products, rankings, variants];
+      [categories, products, rankings, variants, productTax];
 }

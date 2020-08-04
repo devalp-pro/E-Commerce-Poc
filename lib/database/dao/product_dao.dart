@@ -90,7 +90,9 @@ class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
         .map((rawData) => rawData.readTable(variants))
         .get();
 
-    return ProductWithDetails(product: product, colorVariants: colorVariantList);
+    Tax tax = await appDatabase.taxDao.getProductTax(prodId);
+
+    return ProductWithDetails(product: product, colorVariants: colorVariantList, tax: tax);
   }
 
   Stream<List<Variant>> getProductSizeVariantByColor(int prodId, String color) {
@@ -126,26 +128,26 @@ class ProductDao extends DatabaseAccessor<AppDatabase> with _$ProductDaoMixin {
 //    }).watch();
 //  }
 
-  Future<void> insertAllProducts(DataBean appData) {
-    return transaction(() async {
-      for (CategoryBean categoryBean in appData.categories) {
-        if (categoryBean.products.isNotEmpty) {
-          for (ProductsBean productsBean in categoryBean.products) {
-            ProductsCompanion productsCompanion = ProductsCompanion(
-                id: Value(productsBean.id),
-                name: Value(productsBean.name),
-                dateAdded: Value(DateTime.parse(productsBean.dateAdded)),
-                catId: Value(categoryBean.id));
-
-            await into(products).insertOnConflictUpdate(productsCompanion);
-            if (productsBean.variants != null && productsBean.variants.length > 0) {
-              for (VariantBean variantBean in productsBean.variants) {
-                await appDatabase.variantDao.insertVariant(variantBean, productsBean.id);
-              }
-            }
-          }
-        }
-      }
-    });
-  }
+//  Future<void> insertAllProducts(DataBean appData) {
+//    return transaction(() async {
+//      for (CategoryBean categoryBean in appData.categories) {
+//        if (categoryBean.products.isNotEmpty) {
+//          for (ProductsBean productsBean in categoryBean.products) {
+//            ProductsCompanion productsCompanion = ProductsCompanion(
+//                id: Value(productsBean.id),
+//                name: Value(productsBean.name),
+//                dateAdded: Value(DateTime.parse(productsBean.dateAdded)),
+//                catId: Value(categoryBean.id));
+//
+//            await into(products).insertOnConflictUpdate(productsCompanion);
+//            if (productsBean.variants != null && productsBean.variants.length > 0) {
+//              for (VariantBean variantBean in productsBean.variants) {
+//                await appDatabase.variantDao.insertVariant(variantBean, productsBean.id);
+//              }
+//            }
+//          }
+//        }
+//      }
+//    });
+//  }
 }

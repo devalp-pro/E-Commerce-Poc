@@ -94,7 +94,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 padding: const EdgeInsets.all(10),
                                 child: RichText(
                                   text: TextSpan(
-                                    text: "${state.productWithDetails.product.name} - (${selectedColorVariant != null ? selectedColorVariant.color : ""})",
+                                    text:
+                                        "${state.productWithDetails.product.name} - (${selectedColorVariant != null ? selectedColorVariant.color : ""})",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
@@ -112,7 +113,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     fontSize: 18,
                                   ),
                                 ),
-                              )
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  "${state.productWithDetails.tax.name} - ${state.productWithDetails.tax.value}",
+                                  style: TextStyle(
+                                    color: Colors.blueGrey,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),

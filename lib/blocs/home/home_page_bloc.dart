@@ -35,9 +35,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     try {
       DataBean dataBean = await apiRepository.getData();
       if (dataBean != null) {
-        await appDatabase.categoryDao.insertAllCategory(dataBean);
-        await appDatabase.productDao.insertAllProducts(dataBean);
-        await appDatabase.rankingDao.insertAllRankings(dataBean);
+        await appDatabase.insertAllData(dataBean);
       }
       Map<String, dynamic> homeContent = Map();
       List<CategoriesWithSubCategory> parentCatList = await appDatabase.categoryDao.getCategoryWithSubCategory();

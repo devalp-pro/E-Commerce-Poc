@@ -48,19 +48,19 @@ class CategoryDao extends DatabaseAccessor<AppDatabase> with _$CategoryDaoMixin 
     return CategoriesWithSubCategory(category, categoryWithSubCatList);
   }
 
-  Future<void> insertAllCategory(DataBean appData) {
-    return transaction(() async {
-      for (CategoryBean category in appData.categories) {
-        CategoriesCompanion categoriesCompanion;
-        CategoryBean categoryBean = appData.categories
-            .singleWhere((cat) => cat.childCategories.singleWhere((childId) => childId == category.id, orElse: () => -1) != -1, orElse: () => null);
-        if (categoryBean != null) {
-          categoriesCompanion = CategoriesCompanion(id: Value(category.id), name: Value(category.name), parentId: Value(categoryBean.id));
-        } else {
-          categoriesCompanion = CategoriesCompanion(id: Value(category.id), name: Value(category.name));
-        }
-        await into(categories).insertOnConflictUpdate(categoriesCompanion);
-      }
-    });
-  }
+//  Future<void> insertAllCategory(DataBean appData) {
+//    return transaction(() async {
+//      for (CategoryBean category in appData.categories) {
+//        CategoriesCompanion categoriesCompanion;
+//        CategoryBean categoryBean = appData.categories
+//            .singleWhere((cat) => cat.childCategories.singleWhere((childId) => childId == category.id, orElse: () => -1) != -1, orElse: () => null);
+//        if (categoryBean != null) {
+//          categoriesCompanion = CategoriesCompanion(id: Value(category.id), name: Value(category.name), parentId: Value(categoryBean.id));
+//        } else {
+//          categoriesCompanion = CategoriesCompanion(id: Value(category.id), name: Value(category.name));
+//        }
+//        await into(categories).insertOnConflictUpdate(categoriesCompanion);
+//      }
+//    });
+//  }
 }

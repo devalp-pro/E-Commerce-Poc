@@ -105,7 +105,7 @@ class _MyListItem extends StatelessWidget {
     var colorList = List.of([Colors.blue, Colors.blueAccent, Colors.lightBlue, Colors.lightBlueAccent]);
 
     return Container(
-      height: 360,
+      height: 340,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: (this.index % 2 == 0) ? colorList.toList() : colorList.reversed.toList(),
@@ -128,28 +128,29 @@ class _MyListItem extends StatelessWidget {
                   ),
                 ),
               ),
-              listItem.length > 6
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                      alignment: Alignment.centerRight,
-                      child: OutlineButton(
-                          splashColor: Colors.blueGrey,
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                          highlightedBorderColor: Colors.white,
-                          onPressed: () => {},
-                          child: Text(
-                            'See More',
-                            style: TextStyle(color: Colors.white),
-                          )),
-                    )
-                  : Container()
+//              listItem.length > 6
+//                  ? Container(
+//                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+//                      alignment: Alignment.centerRight,
+//                      child: OutlineButton(
+//                          splashColor: Colors.blueGrey,
+//                          borderSide: BorderSide(color: Colors.white, width: 2),
+//                          highlightedBorderColor: Colors.white,
+//                          onPressed: () => {},
+//                          child: Text(
+//                            'See More',
+//                            style: TextStyle(color: Colors.white),
+//                          )),
+//                    )
+//                  : Container()
             ],
           ),
           Container(
-            height: 280,
+            height: 260,
             width: double.infinity,
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+              scrollDirection: Axis.horizontal,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               padding: const EdgeInsets.symmetric(horizontal: 10),
               itemBuilder: (context, index) {
                 return Card(
@@ -203,9 +204,9 @@ class _MyListItem extends StatelessWidget {
                   ),
                 );
               },
-              itemCount: listItem.length > 6 ? 6 : listItem.length,
+              itemCount: listItem.length,
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+//              physics: NeverScrollableScrollPhysics(),
             ),
           ),
         ],
